@@ -3,95 +3,86 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-class Post(models.Model):
-    STATUS_CHOICES = (
-        ('draft', 'Draft'),
-        ('published', 'Published'),
-    )
-    title = models.CharField(max_length=250)
-    slug = models.SlugField(max_length=250,
-                            unique_for_date='publish')
-    author = models.ForeignKey(User,
-                              on_delete=models.CASCADE,
-                              related_name='blog_posts')
-    body = models.TextField()
-    publish = models.DateTimeField(default=timezone.now)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=10,
-                              choices=STATUS_CHOICES,
-                              default='draft')
-    class Meta:
-        ordering = ('-publish',)
+from django.urls import reverse # Used to generate URLs by reversing the URL patterns
+import uuid # Required for unique module instances
+
+class Content_Type(models.Model):
+    """Model representing a module type."""
+    name = models.CharField(max_length=200, help_text='Enter a module type (e.g. Saftey or Benefit)')
+    
     def __str__(self):
-        return self.title
+        """String for representing the Model object."""
+        return self.name
 
-class Topic (models.Model):
-    title = models.CharField (max_length=255)
-    slug= models.SlugField(max_length=255,unique=True)
+class Module(models.Model):
+    """Model representing a training module."""
+    title = models.CharField(max_length=200)
 
-    class Meta:
-        ordering =['title']
+    # Foreign Key used because the training module can only have one instructor, but instructor can have multiple training module
+    instructor = models.ForeignKey('Instructor', on_delete=models.SET_NULL, null=True)
+    summary = models.TextField(max_length=1000, help_text='Enter a brief description of the training module')
+    code = models.CharField('CODE', max_length=10, unique=True, 
+                            help_text='')
+    # ManyToManyField used because type can contain many module. Module can cover many types.
+    content_type = models.ManyToManyField(Content_Type, help_text='Select a type for this module')
+    
+    def display_content_type(self):
+        """Create a string for the content_type. This is required to display type in Admin."""
+        return ', '.join(content_type.name for content_type in self.content_type.all()[:3])
+    
+    display_content_type.short_description = 'Type'
 
     def __str__(self):
+        """String for representing the Model object."""
         return self.title
+    
+    def get_absolute_url(self):
+        """Returns the url to access a detail record for this module."""
+        return reverse('module-detail', args=[str(self.id)])
 
-class Subtopic(models.Model):
-    owner = models.ForeignKey (User,
-                                related_name='subtopics_created', 
-                                on_delete=models.CASCADE)
-    topic = models.ForeignKey(Topic,
-                                related_name='subtopic', 
-                                on_delete=models.CASCADE)
-    title =models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255,unique =True)
-    detail =models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
+class ModuleInstance(models.Model):
+    """Model representing a specific module status."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular module in the training')
+    module = models.ForeignKey('Module', on_delete=models.SET_NULL, null=True) 
+    imprint = models.CharField(max_length=200)
+    start_date = models.DateField(null=True, blank=True)
+
+    MODULE_STATUS = (
+        ('N', 'Not started'),
+        ('P', 'On progress'),
+        ('D', 'Done'),
         
-    class Meta: 
-        ordering = ['-created']
+    )
 
-    def __str__(self):
-        return self.title
-
-class Content (models.Model):
-    subtopic = (models.ForeignKey(Subtopic,
-                                  related_name= 'contents',
-                                  on_delete = models.CASCADE))
-    content_type = models.ForeignKey (ContentType,
-                                    on_delete = models.CASCADE,
-                                    limit_choices_to = {'model__in':(
-                                    'text',
-                                    'video',
-                                    'image',
-                                    'file')})
-    object_id = models.PositiveIntegerField()
-    item = GenericForeignKey ('content_type', 'object_id')
-
-#Creating the content models
-
-class ItemBase(models.Model):
-    owner = models.ForeignKey (User,
-                                related_name = '%(class)s_related',
-                                on_delete = models.CASCADE)
-    title = models. CharField(max_length = 255)
-    created = models.DateTimeField (auto_now_add = True)
-    updated = models. DateTimeField (auto_now = True)
+    status = models.CharField(
+        max_length=1,
+        choices=MODULE_STATUS,
+        blank=True,
+        default='N',
+        help_text='Not Started',
+    )
 
     class Meta:
-        abstract = True
+        ordering = ['start_date']
 
     def __str__(self):
-        return self.title
+        """String for representing the Model object."""
+        return f'{self.id} ({self.module.title})'
 
-class Text (ItemBase):
-    content = models.TextField()
+class Instructor(models.Model):
+    """Model representing an instructor."""
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+    
+    
+    class Meta:
+        ordering = ['last_name', 'first_name']
 
-class File (ItemBase):
-    file =models.FileField (upload_to ='files')
+    def get_absolute_url(self):
+        """Returns the url to access a particular instructor instance."""
+        return reverse('instructor-detail', args=[str(self.id)])
 
-class Image (ItemBase):
-    file = models.FileField(upload_to ='images')
-
-class Video (ItemBase):
-    url = models.URLField() 
+    def __str__(self):
+        """String for representing the Model object."""
+        return f'{self.last_name}, {self.first_name}'

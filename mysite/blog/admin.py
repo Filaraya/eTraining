@@ -1,30 +1,56 @@
 from django.contrib import admin
-from .models import Post, Topic, Subtopic
+from django.utils.encoding import force_text
+from .models import Module, Instructor, Content_Type, ModuleInstance 
 #admin.site.register(Post)
+"""
+admin.site.register(Module)
+admin.site.register(Instructor)
+admin.site.register(Content_Type)
+admin.site.register(ModuleInstance)
+"""
+admin.site.register(Content_Type)
 
-# Register your models here.
-@admin.register(Post)
-class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug', 'author', 'publish', 'status')
-    list_filter = ('status', 'created', 'publish', 'author')
-    search_fields = ('title', 'body')
-    prepopulated_fields = {'slug': ('title',)}
-    raw_id_fields = ('author',)
-    date_hierarchy = 'publish'
-    ordering = ('status', 'publish')
-
-@admin.register(Topic)
-class TopicAdmin (admin.ModelAdmin):
-    list_display = ['title', 'slug']
-    prepopulated_fields = {'slug': ('title',)}
-
-@admin.register (Subtopic)
-class Subtopic(admin.ModelAdmin):
-    list_display = ['title', 'topic','created']
-    list_filter = ['created','topic']
-    search_fields = ['title','details']
-    prepopulated_fields = {'slug': ('title',)}
+class ModuleInline(admin.TabularInline):
+    """Defines format of inline module insertion (used in InstructorAdmin)"""
+    model = Module
 
 
+@admin.register(Instructor)
+class InstructorAdmin(admin.ModelAdmin):
+    """Administration object for Instructor models."""
+    list_display = ('last_name',
+                    'first_name', 'email')
+    fields = ['first_name', 'last_name', 'email']
+    inlines = [ModuleInline]
 
 
+class ModuleInstanceInline(admin.TabularInline):
+    """Defines format of inline Module instance insertion (used in ModuleAdmin)"""
+    list_filter = ('status', 'start_date')
+    model = ModuleInstance
+
+
+class ModuleAdmin(admin.ModelAdmin):
+    """Administration object for Module models."""
+    
+    list_display = ('title', 'instructor','display_content_type')
+    inlines = [ModuleInstanceInline]
+
+
+admin.site.register(Module, ModuleAdmin)
+
+
+@admin.register(ModuleInstance)
+class ModuleInstanceAdmin(admin.ModelAdmin):
+    """Administration object for ModuleInstance models."""
+    list_display = ('module', 'status', 'start_date', 'id')
+    list_filter = ('status', 'start_date')
+
+    fieldsets = (
+        (None, {
+            'fields': ('module', 'imprint', 'id')
+        }),
+        ('Availability', {
+            'fields': ('status', 'start_date')
+        }),
+    )
