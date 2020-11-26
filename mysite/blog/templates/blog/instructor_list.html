@@ -1,0 +1,23 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+<h1>Instructors List</h1>
+
+{% if object_list %}
+<ul>
+
+    {% for instructor in object_list %}
+    <li>
+        <a href="{{ Instructor.get_absolute_url }}">
+            {{ instructor }} 
+            
+        </a>
+    </li>
+    {% endfor %}
+
+</ul>
+{% else %}
+<p>There are no instructor available.</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Modules detail</h1>
+
+<h1>Title: {{ module.title }}</h1>
+
+<p><strong>Instructor:</strong> <a href= "{% url 'instructor-detail' module.instructor.pk %}">{{ module.instructor }}</a></p> <!-- author detail link not yet defined -->
+<p><strong>Summary:</strong> {{ module.summary }}</p>
+<p><strong>CODE:</strong> {{ module.code }}</p>
+
+<a href="">test</a>
+
+
+{% endblock content %}
+
+<!-- {% url 'instructor-detail' module.instructor.pk %} -->

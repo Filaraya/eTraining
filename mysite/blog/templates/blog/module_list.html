@@ -1,0 +1,18 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<h1>Modules list</h1>
+{% if module_list %}
+
+<ul>
+    {% for module in module_list %}
+    <li>
+        <a href="{{ Module.get_absolute_url }}">{{ module.title }}</a> ({{module.instructor}})
+        
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>There are no modules in the eTraining.</p>
+{% endif %}
+
+{% endblock content %}

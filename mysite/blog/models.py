@@ -26,19 +26,22 @@ class Module(models.Model):
     # ManyToManyField used because type can contain many module. Module can cover many types.
     content_type = models.ManyToManyField(Content_Type, help_text='Select a type for this module')
     
+    class Meta:
+        ordering = ['title']
+
     def display_content_type(self):
         """Create a string for the content_type. This is required to display type in Admin."""
         return ', '.join(content_type.name for content_type in self.content_type.all()[:3])
     
     display_content_type.short_description = 'Type'
-
-    def __str__(self):
-        """String for representing the Model object."""
-        return self.title
     
     def get_absolute_url(self):
         """Returns the url to access a detail record for this module."""
         return reverse('module-detail', args=[str(self.id)])
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.title
 
 class ModuleInstance(models.Model):
     """Model representing a specific module status."""
@@ -74,10 +77,10 @@ class Instructor(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)
-    
-    
+
     class Meta:
-        ordering = ['last_name', 'first_name']
+        ordering = ['last_name']
+    
 
     def get_absolute_url(self):
         """Returns the url to access a particular instructor instance."""
@@ -86,3 +89,5 @@ class Instructor(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return f'{self.last_name}, {self.first_name}'
+
+    

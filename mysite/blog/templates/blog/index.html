@@ -6,15 +6,13 @@
 <p>eTraining is a great idea in solving the eTraining problem.</p>
 <p>eTraining creates a chance for the learning modules and materials on the eTraining web application.</p>
 
-
-
 <h2>Content</h2>
 <p>Currently, eTraining has the following contents. </p>
-
 
 <ul>
   <li><strong>Modules:</strong> {{ num_modules }}</li>
   <li><strong>Instructors:</strong> {{ num_instructors }}</li>
 </ul>
+<p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
 
 {% endblock content %}
