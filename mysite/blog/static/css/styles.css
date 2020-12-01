@@ -4,7 +4,7 @@ html, body {
   }
   body {
       margin-bottom: 60px;
-      background-color: blue;
+      background-color: rgb(222, 222, 231);
   }
   
   #wrap {
@@ -28,7 +28,6 @@ html, body {
     margin-top: 90px;
     padding: 0;
     list-style: none;
-    background-color: rgb(215, 215, 228);
     min-width: 250px;
     max-width: 250px;
     min-height: 100vh;
