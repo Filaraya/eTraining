@@ -11,10 +11,10 @@
 {% for module in module_list %}
 <div class=" card mb-3">
     <div class="card-header">
-        <a href="{{ Module.get_absolute_url }}">{{ module.title }}</a>
+        <a href="{% url 'blog:module-detail' module.pk %}" >{{ module.title }}</a>
     </div>
     <div class="card-body">
-        <p>Instructor: <a href="{{ Instructor.get_absolute_url }}">{{module.instructor}}</a> </p>
+        <p>Instructor: <a href= "{% url 'blog:instructor-detail' module.instructor.pk %}">{{module.instructor}}</a> </p>
         <p>Summary: {{module.summary}}</p>
     </div>
 </div>

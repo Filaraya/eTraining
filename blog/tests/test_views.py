@@ -6,7 +6,7 @@ from blog.models import Instructor
 class InstructorListViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # Create 13 authors for pagination tests
+        # Create 13 instructors for pagination tests
         number_of_instructors = 13
 
         for instructor_id in range(number_of_instructors):
@@ -33,7 +33,7 @@ class InstructorListViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('is_paginated' in response.context)
         self.assertTrue(response.context['is_paginated'] == True)
-        self.assertTrue(len(response.context['author_list']) == 10)
+        self.assertTrue(len(response.context['instructor_list']) == 10)
 
     def test_lists_all_instructors(self):
         # Get second page and confirm it has (exactly) remaining 3 items

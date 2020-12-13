@@ -7,14 +7,14 @@
 {% endblock page_header %}
 {% block content %}
 <h1>Instructors detail</h1>
-
-<h1>Instructor: <a href= "">{{ instructor }}</a> </h1>
-
-    
-
-<div style="margin-left:20px;margin-top:20px">
-    
-
+<div class=" card mb-3">
+    <div class="card-header">
+        {{ instructor.first_name }} {{instructor.last_name}}</a>
+    </div>
+    <div class="card-body">
+        <p>Contact Email: {{instructor.email}} </p>
+        
+    </div>
 </div>
 
 

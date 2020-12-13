@@ -37,7 +37,7 @@ class Module(models.Model):
     
     def get_absolute_url(self):
         """Returns the url to access a detail record for this module."""
-        return reverse('module-detail', args=[str(self.id)])
+        return reverse('module-detail', kwargs={'pk': self.pk })
 
     def __str__(self):
         """String for representing the Model object."""
