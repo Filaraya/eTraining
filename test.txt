@@ -1,3 +1,0 @@
-"test for deployment"
-Author = Filmon.
-data = Dec 13 2020
