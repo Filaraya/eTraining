@@ -55,3 +55,7 @@ If you want to contact me you can reach me at <faraya1@live.maryville.edu>.
 ## License
 
 This project uses the following license: [<license_name>](<link>).
+
+## Deployment
+The project has deployed on PythonAnywhere. this is the link URL 
+http://fili.pythonanywhere.com/
